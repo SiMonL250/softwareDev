@@ -9,7 +9,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class myApplystatusCount {
+public class myApplysCount {
     private String name;
     private Long value;
 }

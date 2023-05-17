@@ -21,23 +21,23 @@ const routes = [
   {
     path: "/HomePage",
     component: HomePage,
-    meta:{permiss:'2'}
+    meta:{permiss:'3'}
   },
   {
     path: "/",
     redirect:'/HomePage',
     hidden:true,
-    meta:{permiss:'2'}
+    meta:{permiss:'3'}
   },
   {
     path: "/EquipmentList",
     component: EquipmentList,
-    meta:{permiss:'2'}
+    meta:{permiss:'3'}
   },
   {
     path: "/applyrecord",
     component: ApplyPage,
-    meta:{permiss:'2'}
+    meta:{permiss:'3'}
   },
   {
     path: "/ManageUser",

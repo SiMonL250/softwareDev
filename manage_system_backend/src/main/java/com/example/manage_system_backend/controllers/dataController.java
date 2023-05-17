@@ -1,14 +1,16 @@
 package com.example.manage_system_backend.controllers;
 
 import com.example.manage_system_backend.jsondata.JsonData;
+import com.example.manage_system_backend.mapper.applyMapper;
 import com.example.manage_system_backend.mapper.equipmentMapper;
 import com.example.manage_system_backend.models.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 import java.util.ArrayList;
@@ -18,7 +20,8 @@ import java.util.List;
 public class dataController {
     @Autowired
     equipmentMapper equipmentMapper;
-
+    @Autowired
+    applyMapper applyMapper;
     @GetMapping("/getallequipment")
     public JsonData getAllaEquipment(){
         try{
@@ -42,7 +45,6 @@ public class dataController {
             if(statusCountsList!=null){
                 List<String> etypes = equipmentMapper.SelectEtypes();//all types
                 int length = etypes.size();
-                System.out.println(length);
                 List<Integer> normals = new ArrayList<>();
                 List<Integer> brokes = new ArrayList<>();
                 int sum=0;
@@ -94,10 +96,10 @@ public class dataController {
         System.out.println(equipment.toString());
         String  key=equipment.getEkey();
 
-        if(equipmentMapper.getEquipmentByEkey(key) == null){//TODO 返回所有设备以更新表格？
+        if(equipmentMapper.getEquipmentByEkey(key) == null){
             equipmentMapper.insertEquipment(key,equipment.getEname(),equipment.getEtype(),
                     equipment.getEstatus(),equipment.getUseraccount(),equipment.getAddtime());
-            return JsonData.buildSuccess("成功!!");
+            return JsonData.buildSuccess("添加成功!!");
         }else{
             return JsonData.buildFail("键值重复!!");
         }
@@ -142,5 +144,32 @@ public class dataController {
             e.printStackTrace();
         }
         return JsonData.buildFail("数据库错误!");
+    }
+
+    @GetMapping("/myapplychart")
+    public JsonData myApplyChart(@RequestParam("student")String student){
+        System.out.println("myapplychart:"+student);
+        try{
+            List<myApplysCount> mec = applyMapper.selectmyApplyEtypeCount(student);
+            List<myApplysCount> msc = applyMapper.selectmyApplystatusCount(student);
+            myapplychart applychart = new myapplychart(mec, msc);
+            System.out.println(applychart.toString());
+            if(applychart.myApplyEtypeCounts!=null &&applychart.myApplystatusCounts!=null){
+                return JsonData.buildSuccess(applychart);
+            }else {
+                return JsonData.buildFail("获取失败！");
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return JsonData.buildFail("数据库错误!");
+    }
+    @AllArgsConstructor
+    @Getter
+    @Setter
+    @ToString
+    static class myapplychart{
+        private List<myApplysCount> myApplyEtypeCounts;
+        private List<myApplysCount> myApplystatusCounts;
     }
 }

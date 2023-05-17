@@ -17,6 +17,8 @@ public class applyController {
 
     @GetMapping("/getallapply")
     public JsonData getAllApply(){
+        // 加一个申请过期验证；applystatus='待处理' and datedue<今天 就过期
+        applyMapper.checkApplyStatus();
         List<applyModel> alldata;
         try{
             alldata = applyMapper.selectAllApplyRecord();
@@ -41,21 +43,36 @@ public class applyController {
         System.out.println(apply.toString());
         try{
             applyModel a ;
-            a = applyMapper.selectApplyRecordByapplicant(ekey,applicant,"待处理");
+            a = applyMapper.selectApplyRecordByapplicant(ekey,applicant);
             if(a !=null ){
                 return JsonData.buildFail("设备已申请过！");
             }
-            applyMapper.insertApply(applykey,apply.getEkey(),apply.getEname(),
-                    apply.getApplicant(),null,apply.getApplydate(),null,datedue,datestart);
 
-            //TODO 正在使用的设备不能被其他申请 正在使用：在[datestart,datedue]之间并且applysattus 为‘已同意’；
 
+            //正在使用的设备不能被其他申请 正在使用：在[datestart,datedue]之间并且applysattus 为‘已同意’；
+            //select by ekey ,applystatus is '已同意'  ; 只要申请的datestart 和 datedue有一个在区间内就不能申请。
+            applyModel tocheck =applyMapper.selectByEkeyAndAgreed(ekey);
+            System.out.println("tocheck:"+tocheck);
+            if(tocheck==null){
+                applyMapper.insertApply(applykey,apply.getEkey(),apply.getEname(),
+                        apply.getApplicant(),null,apply.getApplydate(),null,datedue,datestart);
+            }else {
+                Date tocheckDatestart = tocheck.getProcessdate();
+                Date tocheckDatedue = tocheck.getDatedue();
+                if(datedue.before(tocheckDatestart) || datestart.after(tocheckDatedue)){// 申请的datestart1 和 datedue1 都不在tocheck [datestart,datedue] 区间内 datedue1<datestart || datestart1>datedue
+                    applyMapper.insertApply(applykey,apply.getEkey(),apply.getEname(),
+                            apply.getApplicant(),null,apply.getApplydate(),null,datedue,datestart);
+                }else{
+                    return JsonData.buildFail("设备被占用！");
+                }
+            }
+
+            //申请后检查是否申请成功；
             if(applyMapper.selectApplyRecordByKey(applykey) !=null){
                 return JsonData.buildSuccess("申请成功！");
             }else {
                 return JsonData.buildFail("申请失败！");
-            }
-        }catch (Exception e){
+            }        }catch (Exception e){
             e.printStackTrace();
         }
         return JsonData.buildFail("数据库错误!!");

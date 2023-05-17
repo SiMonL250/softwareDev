@@ -34,6 +34,7 @@ import { NForm, NFormItem, NButton, NInput } from "naive-ui";
 import axiosApi from '@/utils/axiosapi';
 import localCache from '@/utils/localCache';
 import { mMessage } from '@/utils/Message';
+import { dateFormat } from '@/utils/dateFormat';
 
 const emit = defineEmits(["unshowAddModal"])
 /*equipment object  //
@@ -54,7 +55,7 @@ const equipmentInfo_model = ref({//声明表单键
     useraccount: localCache.getCache('username'),
     addtime: null
 });
-const date_ref = ref(null); //声明表单对象
+const date_ref = ref(dateFormat(new Date())); //声明表单对象
 
 const form_rules = {
     ename: [
@@ -95,6 +96,7 @@ function buttonSubmmit(m, date) {
         new axiosApi('/addequipment', 'post', m, (res) => {
             console.log(res.data);
             if (res.data.code == 200) {
+                mMessage(res.data.msg,'success');
                 emit("unshowAddModal", false);
             }
         }).useAxios();

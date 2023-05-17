@@ -27,7 +27,7 @@
             </div>
         </div>
         <n-data-table :columns="createColumns()" :data="table_data" :pagination="paginationReactive" bordered striped
-            min-height="600" />
+            min-height="600" :loading="loading"/>
         <div>
             <n-modal v-model:show="edit_show_modal">
                 <n-card title="Edit" size="huge" style="width:650px">
@@ -68,6 +68,7 @@ const edit_show_modal = ref(false);
 const row_data = ref(null);
 const show_date_range_selector = ref(false);
 //table column
+const loading = ref(true);
 const enameColumn = reactive({
     title: "设备名",
     key: "ename",
@@ -133,7 +134,6 @@ const admin_delete_action = {
     },
 };
 const student_apply_action = {
-    //TODO 渲染一个日期选择器；作到期时间 datedue
     width: 24,
     align: 'center',
     // eslint-disable-next-line no-unused-vars
@@ -231,6 +231,8 @@ const all_data = function () {
             const all_data = res.data.data;
 
             table_data.value = all_data ;
+            if(table_data.value!=null) loading.value=false
+            else mMessage('加载失败','error');
         }).useAxios();
 }
 all_data();

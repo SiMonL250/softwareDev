@@ -41,7 +41,9 @@ import {
 import { RouterLink, RouterView } from "vue-router";
 import localCache from "@/utils/localCache";
 import {msidebarColllapsed} from '@/store/sidebarCollapsed'
+import { userPermission } from '@/store/userPermission'
 
+const permiss = userPermission();
 const mcollapsed = msidebarColllapsed();
 console.log('collapsed',mcollapsed.handleGet());
 console.log('username', localCache.getCache('username'));
@@ -79,9 +81,6 @@ const getmenuOptions = function () {
       key: "EquipmentList",
       icon: renderIcon(List)
     },
-  ];
-
-  const admin_cansee = [
     {
       label: () => h(
         RouterLink,
@@ -94,6 +93,9 @@ const getmenuOptions = function () {
       key: "ApplyRecord",
       icon: renderIcon(BookIcon)
     },
+  ];
+
+  const admin_cansee = [
     {
       label: () => h(
         RouterLink,
@@ -108,7 +110,7 @@ const getmenuOptions = function () {
     }
   ];
 
-  menuOptions.push.apply(menuOptions, admin_cansee);
+  if(permiss.$state.role=='admin')menuOptions.push.apply(menuOptions, admin_cansee);
 
   return menuOptions;
 }

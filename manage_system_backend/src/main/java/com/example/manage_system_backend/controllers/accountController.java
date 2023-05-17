@@ -84,7 +84,7 @@ public class accountController {
     JsonData changeAccount(@RequestBody user user){
         System.out.println("changeaccount-"+user.toString());
         try{
-            userMapper.updateUser(user.getPassword(),user.getUserprivilege(),user.getUseraccount());//TODO 返回所有用户以更新表格？
+            userMapper.updateUser(user.getPassword(),user.getUserprivilege(),user.getUseraccount());
             return JsonData.buildSuccess("成功!");
         }catch (Exception e){
             e.printStackTrace();

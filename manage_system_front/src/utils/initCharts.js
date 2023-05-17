@@ -98,11 +98,12 @@ function initLineCahrt(predata) {
         formatter: function (params) {
           params = params[0];
           let now = new Date();
-          let year,month=data.d[params.dataIndex];
-          if(month<=now.getMonth()) year = now.getFullYear();
-            else year=now.getFullYear()-1;
-          return year+'/'+month+' : ' + params.value;
-      },
+          let year,
+            month = data.d[params.dataIndex];
+          if (month <= now.getMonth()) year = now.getFullYear();
+          else year = now.getFullYear() - 1;
+          return year + "/" + month + " : " + params.value;
+        },
       },
       series: [
         {
@@ -113,4 +114,45 @@ function initLineCahrt(predata) {
     });
   }
 }
-export { initEtypeBar, initLineCahrt };
+
+function datap(d) {
+  let legendd = [];
+  let seriesd = [];
+
+  for (let i of d) {
+    legendd.push(i.name);
+    seriesd.push(i.value);
+  }
+
+  return { legendd, seriesd };
+}
+
+function initMyApply(data, id, title) {
+  var d = datap(data);
+  document.getElementById(id).removeAttribute("_echarts_instance_");
+  let my_apply = document.getElementById(id);
+  let c = echarts.init(my_apply, "dark");
+
+  c.setOption({
+	title:{
+		text:title,
+		left:'center'
+	},
+    xAxis: {
+      type: "category",
+      data: d.legendd,
+    },
+    yAxis: {
+      types: "value",
+    },
+    tooltip: {
+      trigger: "axis",
+    //   axisPointer: {
+    //     type: "shadow",
+    //   },
+    },
+    series: [{ data: d.seriesd, type: "bar" }],
+  });
+}
+
+export { initEtypeBar, initLineCahrt, initMyApply };

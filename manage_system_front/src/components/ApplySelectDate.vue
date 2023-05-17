@@ -51,7 +51,11 @@ const disabledDate = function (d) {
 
 const applyEquipment = function () {
     if (permiss.$state.show) {
-        mMessage('错误！', 'error');
+        mMessage('错误！', 'warning');
+        return;
+    }
+    if (daterange.value[1]  == daterange.value[0]) {
+        mMessage("不能是同一天", 'error');
         return;
     }
     let time = new Date().getTime();
@@ -69,8 +73,8 @@ const applyEquipment = function () {
         datestart: daterange.value[0],
     }
     console.log('apply to use', applybody);
-    
-    new axiosApi('/apply','post',applybody,(res) => {
+
+    new axiosApi('/apply', 'post', applybody, (res) => {
         const res_data = res.data;
         console.log('apply res', res_data);
         let ares = res_data.code == 200 ? 'success' : 'error';

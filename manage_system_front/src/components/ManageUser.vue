@@ -1,7 +1,8 @@
 <template>
     <div>
+        <!-- TODO 增加添加用户按钮 -->
         <h1 style="color: white;"> 用户管理</h1>
-        <n-data-table :columns="users_table_columns" :data="user_table_data" :pagination="paginationReactive" striped />
+        <n-data-table :columns="users_table_columns" :data="user_table_data" :pagination="paginationReactive" striped :loading="loading"/>
     </div>
     <n-modal v-model:show="show_edit_user_modal">
         <n-card style="width: 360px" size="huge" aria-modal="true">
@@ -20,6 +21,7 @@ import localCache from '@/utils/localCache';
 import axiosApi from '@/utils/axiosapi';
 
 const show_edit_user_modal = ref(false);
+const loading = ref(true);
 const row_user = ref(null);
 const users_table_actioncolumns = reactive({
 
@@ -121,6 +123,8 @@ const user_table_data = ref([]);
 const get_alluser = function () {
     new axiosApi('/getalluser','get',null,(res) => {
             user_table_data.value = res.data.data;
+            if(user_table_data.value!=null) loading.value=false;
+            else mMessage('加载失败','error');
         }).useAxios();
 }
 get_alluser();

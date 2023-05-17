@@ -9,11 +9,19 @@
                             v-model="formValue.userprivilege" value="admin">
                         <label for="admin" style="color: white;">admin</label>
                     </div>
+                    
+                    <div class="radio_userprivilege">
+                        <input class="radio_input" name="userprivilege" type="radio" id="teacher"
+                            v-model="formValue.userprivilege" value="teacher">
+                        <label for="teacher" style="color: white;">teacher</label>
+                    </div>
+
                     <div class="radio_userprivilege">
                         <input class="radio_input" name="userprivilege" type="radio" id="student"
                             v-model="formValue.userprivilege" value="student">
                         <label for="student" style="color: white;">student</label>
                     </div>
+                   
                 </div>
                 <n-form-item path="formValue.useraccount" label="账号" label-style="color:white"
                     :validation-status="notNullValidation(formValue.useraccount)"
@@ -29,7 +37,6 @@
 
                 <div class="login_register_buttons">
                     <n-button style="color: white;" @click="loginClick(formValue)"> 登录 </n-button>
-                    <n-button style="color: white;" @click="registerClick(formValue)"> 注册 </n-button>
                 </div>
             </n-form>
         </div>
@@ -108,6 +115,7 @@ function loginClick(m) {
             }
         }).useAxios();
 }
+// eslint-disable-next-line no-unused-vars
 function registerClick(m) {
     if (m.useraccount == "") {
         mMessage("Null Account", 'warning');
