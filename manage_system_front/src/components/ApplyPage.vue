@@ -3,7 +3,6 @@
         <div id="waiting">
             <p style="margin-top: -10px;">待处理</p>
             <el-table stripe :data="table_data_wait" height="355" >
-                <!-- TODO 写个筛选 -->
                 <el-table-column v-for="i in table_column_wait" :key="i"  :prop="i.prop" :label="i.label"/>
                 <el-table-column label="操作" width="160">
                     <template #default="scope">
@@ -17,7 +16,8 @@
         <div id="processed">
             <p>已处理</p>
             <el-table stripe height="350" :data="table_data_processed" >
-                <el-table-column v-for="i in table_column_processed" :key="i" :prop="i.prop" :label="i.label" />
+                <el-table-column v-for="i in table_column_processed" :key="i" :prop="i.prop" :label="i.label"  
+                :filters="i.filter" :filter-method="i.filter_method"/>
                 <el-table-column label="操作" >
                     <template #default="scope">
                         <el-button size="small" @click="deleteRecord(scope.row.applykey)">删除</el-button>

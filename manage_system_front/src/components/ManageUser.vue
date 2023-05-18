@@ -1,8 +1,8 @@
 <template>
     <div>
-        <!-- TODO 增加添加用户按钮 -->
         <h1 style="color: white;"> 用户管理</h1>
-        <n-data-table :columns="users_table_columns" :data="user_table_data" :pagination="paginationReactive" striped :loading="loading"/>
+        <n-data-table :columns="users_table_columns" :data="user_table_data" :pagination="paginationReactive" striped :loading="loading"
+        style="min-height: 606px;"/>
     </div>
     <n-modal v-model:show="show_edit_user_modal">
         <n-card style="width: 360px" size="huge" aria-modal="true">
@@ -100,9 +100,10 @@ const users_table_columns = [
     {
         title: "权限",
         key: "userprivilege",
-        defaultFilterOptionValues: ['admin', 'student'],
+        defaultFilterOptionValues: ['admin', 'student','teacher'],
         filterOptions: [
             { label: "admin", value: 'admin' },
+            { label: "teacher", value: 'teacher' },
             { label: "student", value: 'student' },
         ],
         filter(value, row) {
@@ -113,7 +114,7 @@ const users_table_columns = [
     users_table_actioncolumns
 ];
 const paginationReactive = reactive({
-    pageSize: 12,
+    pageSize: 10,
     showQuickJumper: true,
 
 });
@@ -123,6 +124,7 @@ const user_table_data = ref([]);
 const get_alluser = function () {
     new axiosApi('/getalluser','get',null,(res) => {
             user_table_data.value = res.data.data;
+            console.log(user_table_data);
             if(user_table_data.value!=null) loading.value=false;
             else mMessage('加载失败','error');
         }).useAxios();
@@ -130,6 +132,7 @@ const get_alluser = function () {
 get_alluser();
 const unshowEditUserModal = function (param) {
     show_edit_user_modal.value = param;
+    get_alluser();
 }
 </script>
 

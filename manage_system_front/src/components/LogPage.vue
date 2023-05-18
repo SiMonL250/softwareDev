@@ -2,7 +2,7 @@
     <div id="log_form">
         <div id="log_box">
             <!-- Input elements should have autocomplete  -->
-            <n-form ref="formRef" :model="formValue" :rules="rules" :label-width="80">
+            <n-form :model="formValue" :rules="rules" :label-width="80">
                 <div style="display: flex;">
                     <div class="radio_userprivilege">
                         <input class="radio_input" name="userprivilege" type="radio" id="admin"
@@ -29,7 +29,7 @@
                     <n-input v-model:value="formValue.useraccount" placeholder="请输入账号" />
                 </n-form-item>
 
-                <n-form-item :path="formValue.password" label="账号" label-style="color:white"
+                <n-form-item :path="formValue.password" label="密码" label-style="color:white"
                     :validation-status="notNullValidation(formValue.password)"
                     :feedback="notNullFeedback(formValue.password)">
                     <n-input v-model:value="formValue.password" placeholder="请输入密码" type="password" />
@@ -37,15 +37,24 @@
 
                 <div class="login_register_buttons">
                     <n-button style="color: white;" @click="loginClick(formValue)"> 登录 </n-button>
+                    <n-button style="color: white;" @click="regist=true"> 注册 </n-button>
                 </div>
             </n-form>
+            <div>
+                <n-modal v-model:show="regist">
+                    <n-card style="width: 360px">
+                        <AddUser @unshowm="unshowm"/>
+                    </n-card>
+                </n-modal>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup>
 import axiosApi from '@/utils/axiosapi';
-import { NForm, NFormItem, NInput, NButton } from 'naive-ui';
+import  AddUser  from "@/components/AddUser.vue";
+import { NForm, NFormItem, NInput, NButton,NModal,NCard } from 'naive-ui';
 import { ref } from 'vue';
 import { notNullValidation, notNullFeedback } from "@/utils/notNull";
 import localCache from '@/utils/localCache';
@@ -57,7 +66,8 @@ import { mMessage } from '@/utils/Message';
 const permiss = userPermission();
 const mcolllapased = msidebarColllapsed();
 const router = useRouter();
-const formRef = ref(null);
+const regist = ref(false);
+
 const formValue = ref(
     {
         useraccount: '',
@@ -115,20 +125,10 @@ function loginClick(m) {
             }
         }).useAxios();
 }
-// eslint-disable-next-line no-unused-vars
-function registerClick(m) {
-    if (m.useraccount == "") {
-        mMessage("Null Account", 'warning');
-        return;
-    }
-    new axiosApi('/register', 'post', m, (response) => {
-        let code = response.data.code;
-        let ares = code == 200 ? 'success' : 'error';
-        mMessage(response.data.msg, ares);
 
-    }).useAxios();
+const unshowm = function(param){
+    regist.value = param;
 }
-
 </script>
 <style scoped>
 #log_form {

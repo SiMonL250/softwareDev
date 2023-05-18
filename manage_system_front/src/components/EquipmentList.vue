@@ -259,9 +259,13 @@ function unfilterName() {
 //modal
 const unshowEditModal = function (param) {
     edit_show_modal.value = param;
+    loading.value = true
+    all_data();
 }
 const unshowAddModal = function (param) {
     add_show_modal.value = param;
+    loading.value = true
+    all_data();
 }
 const unshowSelector = function(param){
     show_date_range_selector.value = param;
